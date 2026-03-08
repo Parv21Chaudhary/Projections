@@ -1,20 +1,300 @@
 <!DOCTYPE html>
-    <html>
-        <head>
-            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-            <link rel="stylesheet"href ="style.css">
-            <title>
-                Thadomal Stock Exchange
-            </title>
-        
-        </head>
-        
-        <body>
-            <div class = "header">
-                <div class = "header-left">
-                    <img src="TSE_logo.png" alt = "TSE_logo">
-                </div>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thadomal Stock Exchange | Gateway to Markets</title>
+    <!-- Use Tailwind CDN safely for the landing page -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.6;
+            animation: float 10s infinite ease-in-out alternate;
+            pointer-events: none;
+        }
+
+        .blob-1 {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .blob-2 {
+            background: linear-gradient(135deg, #10b981, #0ea5e9);
+            width: 500px;
+            height: 500px;
+            bottom: -200px;
+            right: -100px;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-30px) scale(1.05);
+            }
+
+            100% {
+                transform: translateY(20px) scale(0.95);
+            }
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Ticker Animation */
+        .ticker-wrapper {
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .ticker-text {
+            display: flex;
+            white-space: nowrap;
+            animation: ticker 30s linear infinite;
+        }
+
+        .ticker-text:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes ticker {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .btn-glow {
+            position: relative;
+        }
+
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #3b82f6, #10b981, #3b82f6);
+            z-index: -1;
+            border-radius: inherit;
+            filter: blur(10px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-glow:hover::after {
+            opacity: 0.8;
+            animation: pulse-glow 2s linear infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                filter: blur(10px) brightness(1);
+            }
+
+            50% {
+                filter: blur(15px) brightness(1.2);
+            }
+
+            100% {
+                filter: blur(10px) brightness(1);
+            }
+        }
+
+        /* Floating numbers background effect */
+        .floating-numbers {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.03);
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 2rem;
+            pointer-events: none;
+            user-select: none;
+            z-index: 0;
+        }
+
+        .num-1 {
+            top: 15%;
+            left: 10%;
+            animation: float 8s infinite alternate-reverse;
+        }
+
+        .num-2 {
+            top: 60%;
+            left: 20%;
+            animation: float 12s infinite alternate;
+        }
+
+        .num-3 {
+            top: 25%;
+            right: 15%;
+            animation: float 10s infinite alternate;
+        }
+
+        .num-4 {
+            top: 75%;
+            right: 25%;
+            animation: float 15s infinite alternate-reverse;
+        }
+
+        .num-5 {
+            top: 40%;
+            left: 80%;
+            animation: float 11s infinite alternate;
+        }
+    </style>
+</head>
+
+<body class="h-screen w-full flex flex-col relative overflow-hidden bg-slate-900 text-slate-50 m-0 p-0 box-border">
+
+    <!-- Background Elements -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="floating-numbers num-1">+14.50%</div>
+    <div class="floating-numbers num-2">₹1,254.30</div>
+    <div class="floating-numbers num-3">-2.10%</div>
+    <div class="floating-numbers num-4">RELIANCE</div>
+    <div class="floating-numbers num-5">VOL: 4.5M</div>
+
+    <!-- Background Mock Chart Grid -->
+    <div class="absolute inset-0 z-0 opacity-10 pointer-events-none"
+        style="background-image: linear-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.2) 1px, transparent 1px); background-size: 50px 50px;">
+    </div>
+
+    <!-- Header / Navbar -->
+    <header class="w-full py-6 px-8 flex flex-shrink-0 justify-between items-center z-10 box-border">
+        <div class="flex items-center gap-3">
+            <img src="./TSE_logo.png" alt="TSE Logo" class="w-10 h-10 rounded-lg shadow-lg">
+            <span
+                class="font-bold tracking-widest text-lg md:text-xl uppercase bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+                TSE
+            </span>
+        </div>
+        <div class="hidden md:flex gap-6 text-sm font-medium text-slate-300">
+            <span class="hover:text-white transition-colors cursor-pointer flex items-center gap-2"><i
+                    class="fas fa-chart-line text-blue-400"></i> Markets</span>
+            <span class="hover:text-white transition-colors cursor-pointer flex items-center gap-2"><i
+                    class="fas fa-shield-alt text-emerald-400"></i> Secure</span>
+            <span class="hover:text-white transition-colors cursor-pointer flex items-center gap-2"><i
+                    class="fas fa-bolt text-yellow-400"></i> Real-time</span>
+        </div>
+    </header>
+
+    <!-- Main Hero Section -->
+    <main
+        class="flex-grow w-full flex flex-col items-center justify-center text-center px-4 z-10 relative overflow-hidden box-border">
+        <div
+            class="w-full max-w-4xl mx-auto glass-panel p-8 md:p-14 rounded-3xl shadow-2xl border border-slate-700/50 backdrop-blur-xl relative">
+
+            <!-- Badge -->
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-xs font-semibold tracking-wide text-blue-300 mb-8 mx-auto shadow-inner">
+                <span class="relative flex h-2 w-2">
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                LIVE SIMULATOR v2.0
             </div>
-        </body>
-    </html>
+
+            <!-- Main Headline -->
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
+                Thadomal <br class="md:hidden" />
+                <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400">Stock
+                    Exchange</span>
+            </h1>
+
+            <p class="text-base md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
+                Experience the thrill of trading in a risk-free environment.
+                Real-time market data, advanced order types, and comprehensive portfolio tracking.
+            </p>
+
+            <!-- Call to Action -->
+            <div class="flex justify-center items-center mt-4">
+                <a href="./portal.html"
+                    class="btn-glow group relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-200 bg-blue-600 border border-transparent rounded-xl hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 focus:ring-offset-slate-900 shadow-[0_0_20px_rgba(59,130,246,0.5)]">
+                    <i class="fas fa-rocket mr-3 group-hover:-translate-y-1 transition-transform"></i>
+                    Enter Trading Portal
+                    <i class="fas fa-arrow-right ml-3 group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+
+            <!-- Features small text -->
+            <div
+                class="mt-12 pt-8 border-t border-slate-700/50 flex flex-col sm:flex-row flex-wrap justify-center items-center gap-x-8 gap-y-4 text-sm text-slate-400 font-medium">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-check-circle text-emerald-500"></i> Zero Risk Platform
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-check-circle text-emerald-500"></i> Real Binance Data
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-check-circle text-emerald-500"></i> Advanced Screener
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Ticker Tape -->
+    <footer
+        class="w-full flex-shrink-0 bg-slate-900/80 border-t border-slate-800 py-3 z-10 backdrop-blur-md overflow-hidden box-border">
+        <div class="ticker-wrapper">
+            <div class="ticker-text gap-12 font-mono text-sm px-6">
+                <!-- Group 1 -->
+                <span class="text-slate-300">TSE <span class="text-green-400">▲ 1.4%</span></span>
+                <span class="text-slate-300">NIFTY <span class="text-green-400">▲ 0.8%</span></span>
+                <span class="text-slate-300">BANKNIFTY <span class="text-red-400">▼ 0.2%</span></span>
+                <span class="text-slate-300">RELIANCE <span class="text-green-400">▲ 2.1%</span></span>
+                <span class="text-slate-300">HDFC <span class="text-green-400">▲ 0.5%</span></span>
+                <span class="text-slate-300">INFY <span class="text-red-400">▼ 1.1%</span></span>
+                <span class="text-slate-300">TCS <span class="text-green-400">▲ 1.2%</span></span>
+                <span class="text-slate-300">ICICI <span class="text-green-400">▲ 0.4%</span></span>
+                <span class="text-slate-300">SBIN <span class="text-red-400">▼ 0.5%</span></span>
+
+                <!-- Group 2 (Duplicate for seamless loop) -->
+                <span class="text-slate-300 pl-12">TSE <span class="text-green-400">▲ 1.4%</span></span>
+                <span class="text-slate-300">NIFTY <span class="text-green-400">▲ 0.8%</span></span>
+                <span class="text-slate-300">BANKNIFTY <span class="text-red-400">▼ 0.2%</span></span>
+                <span class="text-slate-300">RELIANCE <span class="text-green-400">▲ 2.1%</span></span>
+                <span class="text-slate-300">HDFC <span class="text-green-400">▲ 0.5%</span></span>
+                <span class="text-slate-300">INFY <span class="text-red-400">▼ 1.1%</span></span>
+                <span class="text-slate-300">TCS <span class="text-green-400">▲ 1.2%</span></span>
+                <span class="text-slate-300">ICICI <span class="text-green-400">▲ 0.4%</span></span>
+                <span class="text-slate-300">SBIN <span class="text-red-400">▼ 0.5%</span></span>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

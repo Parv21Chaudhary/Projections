@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thadomal Stock Exchange</title>
+    <link href="./dist/output.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 transition-colors duration-200">
+    <!-- Navbar -->
+    <nav
+        class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <img src="./TSE_logo.png" alt="TSE Logo" class="h-9 w-9 mr-2 rounded">
+                    <span class="font-bold text-xl tracking-tight text-gray-900 dark:text-white">Thadomal Stock
+                        Exchange</span>
+                </div>
+                <!-- Financial Summary (Header) -->
+                <div class="flex items-center space-x-6">
+                    <div class="hidden sm:flex flex-col text-right">
+                        <span class="text-xs text-gray-500 uppercase font-semibold tracking-wider">Available
+                            Balance</span>
+                        <span id="header-balance" class="text-lg font-bold text-gray-900 dark:text-white">₹0.00</span>
+                    </div>
+                    <div class="hidden sm:flex flex-col text-right">
+                        <span class="text-xs text-gray-500 uppercase font-semibold tracking-wider">Portfolio
+                            Value</span>
+                        <span id="header-portfolio-value"
+                            class="text-lg font-bold text-gray-900 dark:text-white">₹0.00</span>
+                    </div>
+                    <div class="hidden sm:flex flex-col text-right">
+                        <span class="text-xs text-gray-500 uppercase font-semibold tracking-wider">Total P&L</span>
+                        <span id="header-total-pnl" class="text-lg font-bold text-gray-500">₹0.00</span>
+                    </div>
+                    <button id="theme-toggle"
+                        class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                    </button>
+                    <button id="reset-account-btn"
+                        class="text-red-600 hover:text-red-800 text-sm font-medium transition-colors">Reset</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
+
+        <!-- Live Ticker -->
+        <div class="mb-6 rounded overflow-hidden shadow-lg border border-gray-200 dark:border-gray-800">
+            <div class="ticker-wrap">
+                <div id="ticker-content" class="ticker-content">
+                    <!-- Ticker Items Generated Here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- View Toggle Tabs -->
+        <div class="flex justify-center mb-6">
+            <div class="inline-flex bg-gray-200 dark:bg-gray-800 rounded-lg p-1">
+                <button id="tab-insights"
+                    class="px-6 py-2 rounded-md text-sm font-semibold transition-colors bg-blue-600 text-white shadow">INSIGHTS</button>
+                <button id="tab-stocks"
+                    class="px-6 py-2 rounded-md text-sm font-semibold transition-colors text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">STOCKS</button>
+            </div>
+        </div>
+
+        <div id="insights-view" class="fade-in max-w-5xl mx-auto space-y-4">
+            <!-- Top Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Market Sentiment -->
+                <div class="bg-[#1e2128] rounded-xl p-5 shadow-lg border border-gray-800">
+                    <h2 class="text-xl font-bold text-white mb-6">
+                        <i class="fas fa-bullseye text-[#00c853] mr-2"></i>The market is <span
+                            id="market-sentiment-text" class="text-[#00c853]">Bullish</span> Today
+                    </h2>
+                    <div class="w-full h-4 bg-[#ff3b3b] rounded-full overflow-hidden flex relative shadow-inner">
+                        <div id="sentiment-advance-bar" class="h-full bg-[#00c853] transition-all duration-700 ease-out"
+                            style="width: 70%"></div>
+                    </div>
+                    <div class="flex justify-between mt-3 text-sm font-semibold tracking-wide">
+                        <span class="text-gray-400">Advances: <span id="sentiment-advances"
+                                class="text-white text-lg ml-1">0</span></span>
+                        <span class="text-gray-400">Declines: <span id="sentiment-declines"
+                                class="text-white text-lg ml-1">0</span></span>
+                    </div>
+                </div>
+
+                <!-- FII - DII Activity -->
+                <div class="bg-[#1e2128] rounded-xl p-5 shadow-lg border border-gray-800">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-white"><i class="fas fa-chart-bar text-gray-500 mr-2"></i>FII
+                            - DII Activity <span
+                                class="text-[10px] text-gray-500 bg-gray-800 px-2 py-0.5 rounded ml-2 font-mono">LIVE /
+                                MOCK</span></h2>
+                    </div>
+                    <div class="space-y-5">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1 pb-1 border-b border-gray-800">
+                                <span class="font-bold text-[#ff3b3b] tracking-wider">FII</span>
+                                <span class="font-mono text-[#ff3b3b] font-bold">- ₹6030.38 cr.</span>
+                            </div>
+                            <div class="w-full h-1.5 mt-2 bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-[#ff3b3b] transition-all duration-500" style="width: 80%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1 pb-1 border-b border-gray-800">
+                                <span class="font-bold text-[#00c853] tracking-wider">DII</span>
+                                <span class="font-mono text-[#00c853] font-bold">+ ₹6971.51 cr.</span>
+                            </div>
+                            <div class="w-full h-1.5 mt-2 bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-[#00c853] transition-all duration-500" style="width: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Sector Performance -->
+                <div class="bg-[#1e2128] rounded-xl p-5 shadow-lg border border-gray-800">
+                    <div class="flex justify-between items-center mb-5 pb-2 border-b border-gray-800">
+                        <h2 class="text-lg font-bold text-white"><i
+                                class="fas fa-chart-pie mr-2 text-blue-400 opacity-80"></i>Sector Performance</h2>
+                        <span class="text-[11px] text-gray-500 uppercase tracking-widest font-semibold flex gap-3">
+                            <span class="text-[#00c853]">Adv</span> <span class="text-[#ff3b3b]">Dec</span>
+                        </span>
+                    </div>
+                    <div class="space-y-5" id="sector-performance-list">
+                        <!-- Generated by JS -->
+                    </div>
+                    <div class="text-center mt-5 pt-3 border-t border-gray-800">
+                        <button
+                            class="text-blue-400 text-xs hover:text-blue-300 font-bold uppercase tracking-wider">Show
+                            all <i class="fas fa-chevron-right text-[10px] ml-1"></i></button>
+                    </div>
+                </div>
+
+                <!-- What's Moving -->
+                <div class="bg-[#1e2128] rounded-xl p-5 shadow-lg border border-gray-800 flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-white"><i
+                                class="fas fa-bolt text-yellow-400 mr-2 opacity-90"></i>What's Moving?</h2>
+                    </div>
+                    <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-none mb-4">
+                        <button
+                            class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#6d28d9] text-white shadow-md shadow-purple-900/50 shrink-0 border border-purple-500/30">Gainers</button>
+                        <button
+                            class="px-4 py-1.5 rounded-full text-xs font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 shrink-0 transition-colors">Losers</button>
+                        <button
+                            class="px-4 py-1.5 rounded-full text-xs font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 shrink-0 transition-colors">52W
+                            High</button>
+                        <button
+                            class="px-4 py-1.5 rounded-full text-xs font-bold bg-gray-800 text-gray-400 hover:bg-gray-700 shrink-0 transition-colors">Volume</button>
+                    </div>
+                    <div class="space-y-2 flex-grow" id="whats-moving-list">
+                        <!-- Generated by JS -->
+                    </div>
+                    <div class="text-center mt-4 pt-3 border-t border-gray-800">
+                        <button
+                            class="text-blue-400 text-xs hover:text-blue-300 font-bold uppercase tracking-wider">Show
+                            all <i class="fas fa-chevron-right text-[10px] ml-1"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section: High Upside & Scans -->
+            <div class="mt-4">
+                <div class="flex items-center gap-2 mb-4 pl-1">
+                    <i class="fas fa-signal text-blue-500"></i>
+                    <h2 class="text-lg font-bold text-white">High Upside Picks</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="high-upside-list">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+
+            <div class="mt-8 mb-8">
+                <div class="flex items-center gap-2 mb-4 pl-1">
+                    <i class="fas fa-search text-gray-400"></i>
+                    <h2 class="text-lg font-bold text-white">Market Scans</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Intraday Scans -->
+                    <div
+                        class="bg-[#1e2128] rounded-xl p-5 shadow-lg border border-gray-800 hover:border-gray-600 transition-colors cursor-pointer group flex flex-col">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-white font-bold tracking-wide group-hover:text-blue-400 transition-colors">
+                                <i class="fas fa-clock text-blue-500 mr-2 opacity-80"></i>Intraday Scans
+                            </h3>
+                            <span
+                                class="text-[10px] bg-blue-900/30 text-blue-400 px-2 py-1 rounded font-bold uppercase tracking-widest">Live</span>
+                        </div>
+                        <div
+                            class="flex-grow flex items-center justify-between bg-gray-800/50 rounded-lg p-3 mt-2 border border-gray-700/50">
+                            <div>
+                                <p class="text-[#ff3b3b] font-bold text-sm mb-1"><i
+                                        class="fas fa-arrow-down mr-1 text-xs"></i>Open Low / High</p>
+                                <p class="text-[11px] text-gray-400 leading-tight">Trending momentum indicators on daily
+                                    open.</p>
+                            </div>
+                            <div
+                                class="bg-[#2a2e37] rounded-lg h-10 w-10 flex items-center justify-center text-white font-bold text-sm shrink-0 ml-3 shadow-inner border border-gray-700">
+                                12
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Breakouts -->
+                    <div
+                        class="bg-[#1e2128] rounded-xl p-5 shadow-lg border border-gray-800 hover:border-gray-600 transition-colors cursor-pointer group flex flex-col">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-white font-bold tracking-wide group-hover:text-[#00c853] transition-colors">
+                                <i class="fas fa-rocket text-[#00c853] mr-2 opacity-80"></i>Breakouts
+                            </h3>
+                            <span
+                                class="text-[10px] bg-blue-900/30 text-blue-400 px-2 py-1 rounded font-bold uppercase tracking-widest">Live</span>
+                        </div>
+                        <div
+                            class="flex-grow flex items-center justify-between bg-gray-800/50 rounded-lg p-3 mt-2 border border-gray-700/50">
+                            <div>
+                                <p class="text-[#00c853] font-bold text-sm mb-1"><i
+                                        class="fas fa-arrow-up mr-1 text-xs"></i>52 Week High</p>
+                                <p class="text-[11px] text-gray-400 leading-tight">Stocks breaking 1 yr resistance
+                                    bands.</p>
+                            </div>
+                            <div
+                                class="bg-[#2a2e37] rounded-lg h-10 w-10 flex items-center justify-center text-white font-bold text-sm shrink-0 ml-3 shadow-inner border border-gray-700">
+                                4
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fundamentals -->
+                    <div
+                        class="bg-[#1e2128] rounded-xl p-5 shadow-lg border border-gray-800 hover:border-gray-600 transition-colors cursor-pointer group flex flex-col">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3
+                                class="text-white font-bold tracking-wide group-hover:text-yellow-400 transition-colors">
+                                <i class="fas fa-file-invoice-dollar text-yellow-500 mr-2 opacity-80"></i>Fundamentals
+                            </h3>
+                            <span
+                                class="text-[10px] bg-blue-900/30 text-blue-400 px-2 py-1 rounded font-bold uppercase tracking-widest">Live</span>
+                        </div>
+                        <div
+                            class="flex-grow flex items-center justify-between bg-gray-800/50 rounded-lg p-3 mt-2 border border-gray-700/50">
+                            <div>
+                                <p class="text-blue-400 font-bold text-sm mb-1"><i
+                                        class="fas fa-star mr-1 text-xs"></i>Best YoY Results</p>
+                                <p class="text-[11px] text-gray-400 leading-tight">Quarterly growth metrics above 20%
+                                    avg.</p>
+                            </div>
+                            <div
+                                class="bg-[#2a2e37] rounded-lg h-10 w-10 flex items-center justify-center text-white font-bold text-sm shrink-0 ml-3 shadow-inner border border-gray-700">
+                                8
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- End Insights View -->
+
+        <div id="dashboard-view" class="hidden fade-in">
+            <!-- Top Section: Heatmap -->
+            <div class="mb-6 card">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold dark:text-white"><i
+                            class="fas fa-th-large mr-2 text-gray-400"></i>Market
+                        Heatmap</h2>
+                </div>
+                <div id="heatmap-container"
+                    class="grid grid-cols-5 gap-1 w-full bg-gray-50 dark:bg-gray-900 rounded p-1 h-32 md:h-40">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+                <!-- Left Column: Market/Stock List -->
+                <div class="lg:col-span-1 flex flex-col gap-6">
+                    <div class="card h-full flex flex-col max-h-[800px]">
+                        <div
+                            class="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
+                            <h2 class="text-xl font-bold dark:text-white"><i
+                                    class="fas fa-store mr-2 text-gray-400"></i>Market Watch</h2>
+                            <span
+                                class="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900 dark:text-green-300 px-2 py-1 rounded animate-pulse">LIVE</span>
+                        </div>
+
+                        <!-- Search Bar -->
+                        <div class="mb-3">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-search text-gray-400"></i>
+                                </div>
+                                <input type="text" id="stock-search-input"
+                                    class="input-field pl-10 py-2 w-full text-sm bg-gray-50 dark:bg-gray-750 dark:text-white rounded-lg focus:ring-1 focus:ring-blue-500 transition-shadow"
+                                    placeholder="Search stocks...">
+                            </div>
+                        </div>
+
+                        <!-- Screener Pills -->
+                        <div class="flex flex-wrap items-center gap-2 pb-2 mb-2">
+                            <button
+                                class="screener-btn shrink-0 active px-3 py-1 rounded-full text-xs font-semibold bg-gray-800 text-white dark:bg-gray-100 dark:text-gray-900"
+                                data-filter="ALL">All</button>
+                            <button
+                                class="screener-btn shrink-0 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                data-filter="GAINERS">Gainers</button>
+                            <button
+                                class="screener-btn shrink-0 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                data-filter="LOSERS">Losers</button>
+                            <button
+                                class="screener-btn shrink-0 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                data-filter="PENNY">&lt; ₹1k</button>
+                        </div>
+
+                        <div id="market-list"
+                            class="space-y-2 overflow-y-auto overflow-x-hidden pr-2 custom-scrollbar flex-grow">
+                            <!-- Stock items generated here -->
+                            <div class="text-center text-gray-500 py-4"><i
+                                    class="fas fa-spinner fa-spin mr-2"></i>Loading
+                                Market Data...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Portfolio & History -->
+                <div class="lg:col-span-3 flex flex-col gap-6">
+
+                    <!-- Portfolio Section -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="md:col-span-3 card">
+                            <div
+                                class="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
+                                <h2 class="text-xl font-bold dark:text-white"><i
+                                        class="fas fa-briefcase mr-2 text-gray-400"></i>Your Portfolio</h2>
+                            </div>
+                            <div
+                                class="table-container rounded-lg border border-gray-200 dark:border-gray-700 max-h-[300px] overflow-y-auto overflow-x-hidden">
+                                <table class="data-table w-full">
+                                    <thead class="sticky top-0 z-10">
+                                        <tr>
+                                            <th>Asset</th>
+                                            <th>Qty</th>
+                                            <th>Avg Price</th>
+                                            <th>LTP</th>
+                                            <th>Current Value</th>
+                                            <th>Unrealized P&L</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="portfolio-list" class="bg-white dark:bg-transparent">
+                                        <!-- Portfolio items generated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Allocation Chart -->
+                        <div class="md:col-span-1 card flex flex-col items-center justify-center">
+                            <h3 class="text-sm font-bold text-gray-500 mb-2">Allocation</h3>
+                            <div class="relative w-full h-full min-h-[150px] flex items-center justify-center">
+                                <canvas id="portfolio-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Orders & History Section -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Pending Orders -->
+                        <div class="card">
+                            <div
+                                class="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
+                                <h2 class="text-lg font-bold dark:text-white"><i
+                                        class="fas fa-clock mr-2 text-gray-400"></i>Pending Orders</h2>
+                            </div>
+                            <div
+                                class="table-container max-h-[250px] overflow-y-auto overflow-x-hidden custom-scrollbar rounded-lg border border-gray-200 dark:border-gray-700">
+                                <table class="data-table w-full">
+                                    <thead class="sticky top-0 z-10">
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Stock</th>
+                                            <th>Qty</th>
+                                            <th>Target</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pending-orders-list" class="bg-white dark:bg-transparent">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Transaction History Section -->
+                        <div class="card">
+                            <div
+                                class="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
+                                <h2 class="text-lg font-bold dark:text-white"><i
+                                        class="fas fa-history mr-2 text-gray-400"></i>Recent History</h2>
+                            </div>
+                            <div
+                                class="table-container max-h-[250px] overflow-y-auto overflow-x-hidden custom-scrollbar rounded-lg border border-gray-200 dark:border-gray-700">
+                                <table class="data-table w-full">
+                                    <thead class="sticky top-0 z-10">
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>Action</th>
+                                            <th>Price/Share</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="transaction-history" class="bg-white dark:bg-transparent">
+                                        <!-- History items generated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div> <!-- End Dashboard View -->
+
+        <!-- Stock Details Landing Page View -->
+        <div id="stock-detail-view" class="hidden fade-in space-y-6">
+            <button id="back-to-dashboard-btn"
+                class="flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-bold transition-colors mb-2">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+            </button>
+
+            <!-- Details Header -->
+            <div
+                class="card flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-l-4 border-blue-500">
+                <div>
+                    <h2 id="detail-symbol" class="text-3xl font-bold dark:text-white">SYMBOL</h2>
+                    <p id="detail-name" class="text-gray-500 text-lg">Company Name</p>
+                </div>
+                <div class="text-right">
+                    <p id="detail-price" class="text-4xl font-mono font-bold dark:text-white">₹0.00</p>
+                    <p id="detail-change" class="text-lg font-semibold text-green-500">+0.00%</p>
+                </div>
+            </div>
+
+            <!-- Details Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Chart Area -->
+                <div class="lg:col-span-2 card flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold dark:text-white"><i
+                                class="fas fa-chart-line mr-2 text-blue-500"></i>Live Price Chart</h3>
+                        <span
+                            class="text-xs font-semibold text-green-600 bg-green-100 dark:bg-green-900 dark:text-green-300 px-2 py-1 rounded animate-pulse">LIVE</span>
+                    </div>
+                    <div class="w-full flex-grow min-h-[350px] relative">
+                        <canvas id="stock-detail-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Stats & Actions -->
+                <div class="lg:col-span-1 flex flex-col gap-6">
+                    <div class="card flex-1 flex flex-col">
+                        <h3 class="text-lg font-bold mb-4 dark:text-white"><i
+                                class="fas fa-info-circle mr-2 text-gray-400"></i>Market Stats</h3>
+                        <div class="space-y-4 flex-grow">
+                            <div class="flex justify-between pb-2 border-b border-gray-100 dark:border-gray-700">
+                                <span class="text-gray-500">Market Cap</span>
+                                <span id="detail-mcap" class="font-medium dark:text-white">-</span>
+                            </div>
+                            <div class="flex justify-between pb-2 border-b border-gray-100 dark:border-gray-700">
+                                <span class="text-gray-500">24h High</span>
+                                <span id="detail-high"
+                                    class="font-mono font-medium text-green-600 dark:text-green-400">-</span>
+                            </div>
+                            <div class="flex justify-between pb-2 border-b border-gray-100 dark:border-gray-700">
+                                <span class="text-gray-500">24h Low</span>
+                                <span id="detail-low"
+                                    class="font-mono font-medium text-red-600 dark:text-red-400">-</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 flex gap-4">
+                            <button id="detail-buy-btn"
+                                class="flex-1 btn btn-primary py-3 font-bold text-lg shadow-lg hover:shadow-blue-500/30 transition-all">BUY</button>
+                            <button id="detail-sell-btn"
+                                class="flex-1 btn bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 py-3 font-bold text-lg transition-all border border-transparent">SELL</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Buy/Sell Modal -->
+    <div id="trade-modal"
+        class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
+        <div
+            class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 w-full max-w-md transform scale-95 transition-transform">
+            <div class="flex justify-between items-center mb-4 border-b pb-2 dark:border-gray-700">
+                <div class="flex items-center gap-2">
+                    <span id="modal-type-badge"
+                        class="px-2 py-1 rounded text-xs font-bold bg-blue-100 text-blue-700">BUY</span>
+                    <h3 id="modal-title" class="text-xl font-bold dark:text-white">Trade</h3>
+                </div>
+                <button id="close-modal"
+                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 focus:outline-none"><i
+                        class="fas fa-times"></i></button>
+            </div>
+
+            <div class="mb-4">
+                <div class="flex justify-between tracking-wide mb-1">
+                    <span class="text-gray-500 dark:text-gray-400 font-bold" id="modal-stock-symbol"></span>
+                    <span id="modal-stock-price" class="font-bold text-gray-900 dark:text-white"></span>
+                </div>
+                <div id="modal-owned-container"
+                    class="flex justify-between text-sm mt-2 pt-2 px-2 border-l-2 border-blue-500 hidden bg-blue-50 dark:bg-blue-900/20 rounded">
+                    <span class="text-gray-600 dark:text-gray-300">Available to Sell</span>
+                    <span id="modal-owned-qty" class="font-bold text-blue-600 dark:text-blue-400">0</span>
+                </div>
+            </div>
+
+            <!-- Order Type -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Order Type</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="btn-market-order"
+                        class="px-3 py-2 text-sm border border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-md font-semibold transition-colors">Market</button>
+                    <button id="btn-limit-order"
+                        class="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md font-medium hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">Limit
+                        / Stop</button>
+                </div>
+            </div>
+
+            <!-- Inputs -->
+            <div class="grid grid-cols-2 gap-4 mb-5">
+                <div>
+                    <label for="trade-quantity"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Quantity</label>
+                    <input type="number" id="trade-quantity" min="1" value="1"
+                        class="input-field w-full text-lg font-mono">
+                </div>
+                <div id="price-input-container" class="opacity-50 pointer-events-none transition-opacity">
+                    <label for="trade-price"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Price</label>
+                    <input type="number" id="trade-price" min="0" step="0.05"
+                        class="input-field w-full text-lg font-mono" disabled>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 dark:bg-gray-750 p-3 rounded-lg border border-gray-200 dark:border-gray-600 mb-6">
+                <div class="flex justify-between text-sm mb-1">
+                    <span class="text-gray-800 dark:text-gray-200 font-bold">Est. Value (Used):</span>
+                    <span id="modal-total-value" class="font-bold text-blue-600 dark:text-blue-400">₹0.00</span>
+                </div>
+                <div class="flex justify-between text-sm font-semibold border-t border-gray-200 dark:border-gray-600 pt-2 mt-2"
+                    id="modal-balance-row">
+                    <span class="text-gray-600 dark:text-gray-400">Remaining Balance:</span>
+                    <span id="modal-user-balance" class="text-gray-900 dark:text-white">₹0.00</span>
+                </div>
+                <p id="modal-error-msg" class="text-red-500 text-xs mt-2 font-medium hidden">Error message</p>
+            </div>
+
+            <div class="flex gap-3">
+                <button id="confirm-trade-btn" class="w-full btn btn-primary flex-1 py-3 text-lg">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>

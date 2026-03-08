@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-gray-50 text-gray-900 transition-colors duration-200;
+    }
+
+    body.dark {
+        @apply bg-gray-900 text-gray-100;
+    }
+}
+
+@layer components {
+    .card {
+        @apply bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-100 dark:border-gray-700;
+    }
+
+    .btn {
+        @apply px-4 py-2 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    }
+
+    .btn-primary {
+        @apply bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500;
+    }
+
+    .btn-success {
+        @apply bg-green-600 text-white hover:bg-green-700 focus:ring-green-500;
+    }
+
+    .btn-danger {
+        @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+    }
+
+    .btn-outline {
+        @apply border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700;
+    }
+
+    .input-field {
+        @apply block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border;
+    }
+
+    .table-container {
+        @apply overflow-x-auto;
+    }
+
+    .data-table {
+        @apply min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-left;
+    }
+
+    .data-table th {
+        @apply px-3 py-2 bg-gray-50 dark:bg-gray-800 text-[11px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider;
+    }
+
+    .data-table td {
+        @apply px-3 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300;
+    }
+
+    .data-table tbody tr {
+        @apply border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors;
+    }
+
+    .ticker-wrap {
+        @apply w-full overflow-hidden bg-gray-900 border-b border-gray-800 flex items-center relative;
+        height: 48px;
+    }
+
+    .ticker-content {
+        @apply flex whitespace-nowrap;
+        animation: ticker 40s linear infinite;
+        width: max-content;
+    }
+
+    .ticker-item {
+        @apply mx-6 text-sm font-semibold tracking-wide text-white;
+    }
+
+    @keyframes ticker {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+}
